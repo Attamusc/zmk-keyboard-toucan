@@ -1,74 +1,253 @@
+/*
+ * Toucan keymap — ported from Urchin layout
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/outputs.h>
 
+
+// Layer definitions
 #define BASE 0
-#define NAV  1
-#define SYM  2
-#define ADJ  3
+#define NAV 1
+#define SYM_RIGHT 2
+#define SYM_LEFT 3
+#define NUM 4
+#define UTIL 5
+#define SYS 6
+
+#define QUICK_TAP_MS 175
+
+// QMK-like keycodes
+#define _XXX &none
+#define ____ &trans
+
+#define _HYPR(kc) &kp LC(LS(LA(LG(kc))))
+#define _MEH(kc) &kp LC(LS(LA(kc)))
+
+#define _RAYCAST &kp LG(SPACE)
+#define _1PASS &kp LG(LS(SPACE))
+#define _AERO_PRE &sk LS(LALT)
+
+&mt {
+  flavor = "balanced";
+  tapping-term-ms = <280>;
+  quick-tap-ms = <QUICK_TAP_MS>;
+  require-prior-idle-ms = <QUICK_TAP_MS>;
+};
+
+&sk {
+  release-after-ms = <900>;
+  quick-release;
+  // don't release mods on other mods presses
+  ignore-modifiers;
+};
+
+&lt {
+  flavor = "balanced";
+  tapping-term-ms = <200>;
+  quick-tap-ms = <QUICK_TAP_MS>;
+};
 
 / {
-    conditional_layers {
-        compatible = "zmk,conditional-layers";
-        tri_layer {
-            if-layers = <1 2>;
-            then-layer = <3>;
-        };
+  behaviors {
+    // Enables holding the first mod-tap key
+    // by performing a tap-release-hold sequence.
+    // To use it: "&qt KEYCODE1 KEYCODE2"
+    qt: quick_tap {
+      compatible = "zmk,behavior-hold-tap";
+      label = "QUICK_TAP";
+      #binding-cells = <2>;
+      flavor = "hold-preferred";
+      tapping-term-ms = <200>;
+      quick-tap-ms = <200>;
+      bindings = <&kp>, <&kp>;
+    };
+  };
+
+  // Toucan key positions (42 keys):
+  //  0  1  2  3  4  5     6  7  8  9 10 11
+  // 12 13 14 15 16 17    18 19 20 21 22 23
+  // 24 25 26 27 28 29    30 31 32 33 34 35
+  //             36 37 38    39 40 41
+
+  combos {
+    compatible = "zmk,combos";
+    // both right thumb keys (mapped from urchin positions 32,33)
+    combo_sys {
+      timeout-ms = <200>;
+      key-positions = <39 40>;
+      bindings = <&mo SYS>;
+    };
+    // left index and middle finger (mapped from urchin 12,13)
+    combo_esc {
+      timeout-ms = <50>;
+      key-positions = <15 16>;
+      bindings = <&kp ESC>;
+    };
+    // left middle and ring finger one row down (mapped from urchin 21,22)
+    combo_hypr_l {
+      timeout-ms = <50>;
+      key-positions = <26 27>;
+      bindings = <&kp LG(LC(LS(LALT)))>;
+    };
+    // left index and middle finger one row down (mapped from urchin 22,23)
+    combo_meh_l {
+      timeout-ms = <50>;
+      key-positions = <27 28>;
+      bindings = <&kp LC(LS(LALT))>;
+    };
+    // right index and middle finger one row down (mapped from urchin 26,27)
+    combo_meh_r {
+      timeout-ms = <50>;
+      key-positions = <31 32>;
+      bindings = <&kp LC(LS(LALT))>;
+    };
+    // right middle and ring finger one row down (mapped from urchin 27,28)
+    combo_hypr_r {
+      timeout-ms = <50>;
+      key-positions = <32 33>;
+      bindings = <&kp LG(LC(LS(LALT)))>;
+    };
+  };
+
+  keymap {
+    compatible = "zmk,keymap";
+
+    base {
+      display-name = "BASE";
+      bindings = <
+//        ┌──────┬───┬───┬──────────┬───────────────┬─────────────┐                        ┌───────────────┬───────────────┬──────────┬───┬──────┬─────┐
+//        │ tab  │ Q │ W │    E     │       R       │      T      │                        │       Y       │       U       │    I     │ O │  P   │ del │
+//        ├──────┼───┼───┼──────────┼───────────────┼─────────────┤                        ├───────────────┼───────────────┼──────────┼───┼──────┼─────┤
+//        │ lctl │ A │ S │ lt NAV D │ lt SYM_rght F │      G      │                        │       H       │ lt SYM_left J │ lt NUM K │ L │ bspc │  '  │
+//        ├──────┼───┼───┼──────────┼───────────────┼─────────────┤                        ├───────────────┼───────────────┼──────────┼───┼──────┼─────┤
+//        │ lalt │ Z │ X │    C     │       V       │      B      │                        │       N       │       M       │    ,     │ . │ ent  │  /  │
+//        └──────┴───┴───┴──────────┼───────────────┼─────────────┼──────┐   ┌─────────────┼───────────────┼───────────────┼──────────┴───┴──────┴─────┘
+//                                  │     _XXX      │ mt lgui f12 │ lsft │   │ lt UTIL spc │ mt lctlTL tab │     _XXX      │
+//                                  └───────────────┴─────────────┴──────┘   └─────────────┴───────────────┴───────────────┘
+      _XXX   &kp Q   &kp W   &kp E       &kp R             &kp T                                            &kp Y   &kp U            &kp I       &kp O     &kp P      _XXX
+      _XXX   &kp A   &kp S   &lt NAV D   &lt SYM_RIGHT F   &kp G                                            &kp H   &lt SYM_LEFT J   &lt NUM K   &kp L     &kp BSPC   _XXX
+      _XXX   &kp Z   &kp X   &kp C       &kp V             &kp B                                            &kp N   &kp M            &kp COMMA   &kp DOT   &kp ENTER  _XXX
+                                              _XXX              &mt LGUI F12   &kp LSHIFT       &lt UTIL SPACE   &mt LCTL TAB   _XXX
+      >;
     };
 
-    keymap {
-        compatible = "zmk,keymap";
-
-        base {
-            display-name = "BASE";
-            bindings = <
-                &kp TAB   &kp Q &kp W &kp E &kp R &kp T   &kp Y &kp U  &kp I     &kp O   &kp P    &kp BSPC
-                &kp LCTRL &kp A &kp S &kp D &kp F &kp G   &kp H &kp J  &kp K     &kp L   &kp SEMI &kp SQT
-                &kp LSHFT &kp Z &kp X &kp C &kp V &kp B   &kp N &kp M  &kp COMMA &kp DOT &kp FSLH &kp ESC
-                                &kp LGUI &mo 1 &kp SPACE   &kp RET &mo 2 &kp RALT
-            >;
-        };
-
-        nav {
-            display-name = "NAV";
-            bindings = <
-                &kp TAB     &kp N1          &kp N2       &kp N3       &kp N4       &kp N5         &kp N6   &kp N7   &kp N8 &kp N9    &kp N0 &kp BSPC
-                &bt BT_CLR  &bt BT_SEL 0    &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4   &kp LEFT &kp DOWN &kp UP &kp RIGHT &trans &trans
-                &kp LSHFT   &studio_unlock  &trans       &trans       &trans       &trans         &trans   &trans   &trans &trans    &trans &trans
-                                                &kp LGUI     &trans       &kp SPACE      &kp RET  &trans   &kp RALT
-            >;
-        };
-
-        sym {
-            display-name = "SYM";
-            bindings = <
-                &kp TAB   &kp EXCL &kp AT &kp HASH &kp DLLR &kp PRCNT   &kp CARET &kp AMPS  &kp KP_MULTIPLY &kp LPAR &kp RPAR &kp BSPC
-                &kp LCTRL &trans   &trans &trans   &trans   &trans      &kp MINUS &kp EQUAL &kp LBKT        &kp RBKT &kp BSLH &kp GRAVE
-                &kp LSHFT &trans   &trans &trans   &trans   &trans      &kp UNDER &kp PLUS  &kp LBRC        &kp RBRC &kp PIPE &kp TILDE
-                                          &kp LGUI &trans   &kp SPACE   &kp RET   &trans    &kp RALT
-            >;
-        };
-
-        adj {
-            display-name = "ADJ";
-            bindings = <
-                &mo TAB   &trans &kp F7 &kp F8 &kp F9 &kp F12   &kp C_VOL_DN &kp C_MUTE  &kp C_VOL_UP &trans &trans &kp BSPC
-                &kp LCTRL &trans &kp F4 &kp F5 &kp F6 &kp F11   &trans       &trans      &trans       &trans &trans &trans
-                &bt LSHFT &trans &kp F1 &kp F2 &kp F3 &kp F10   &trans       &trans      &trans       &trans &trans &trans
-                                   &kp LGUI &mo NAV &kp SPACE   &kp RET &mo 2 &kp RALT
-            >;
-        };
-        extra_1 {
-                status = "reserved";
-        };
-
-        extra_2 {
-                status = "reserved";
-        };
-
-        extra_3 {
-                status = "reserved";
-        };
+    nav {
+      display-name = "NAV";
+      bindings = <
+//        ┌──────┬──────┬──────┬──────┬────────────┬──────┐                 ┌──────┬──────┬──────┬──────┬──────┬──────┐
+//        │ ____ │ ____ │ ____ │ ____ │    ____    │ ____ │                 │ ____ │ ____ │ pgup │ ____ │ ____ │ ____ │
+//        ├──────┼──────┼──────┼──────┼────────────┼──────┤                 ├──────┼──────┼──────┼──────┼──────┼──────┤
+//        │ ____ │ del  │ bspc │ _XXX │ lalt(lgui) │ ____ │                 │ left │ down │  up  │ rght │ ____ │ ____ │
+//        ├──────┼──────┼──────┼──────┼────────────┼──────┤                 ├──────┼──────┼──────┼──────┼──────┼──────┤
+//        │ ____ │ ____ │ ____ │ ____ │    ____    │ ____ │                 │ ____ │ home │ pgdn │ end  │ ____ │ ____ │
+//        └──────┴──────┴──────┴──────┼────────────┼──────┼──────┐   ┌──────┼──────┼──────┼──────┴──────┴──────┴──────┘
+//                                    │    _XXX    │ ____ │ ____ │   │ ____ │ ____ │ _XXX │
+//                                    └────────────┴──────┴──────┘   └──────┴──────┴──────┘
+      _XXX   ____      ____       ____   ____           ____                     ____       ____       &kp PG_UP   ____        ____   _XXX
+      _XXX   &kp DEL   &kp BSPC   _XXX   &kp LA(LGUI)   ____                     &kp LEFT   &kp DOWN   &kp UP      &kp RIGHT   ____   _XXX
+      _XXX   ____      ____       ____   ____           ____                     ____       &kp HOME   &kp PG_DN   &kp END     ____   _XXX
+                                         _XXX           ____   ____       ____   ____       _XXX
+      >;
     };
+
+    sym_right {
+      display-name = "SYM R";
+      bindings = <
+//        ┌──────┬──────┬──────┬──────┬──────┬──────┐                 ┌──────┬──────┬───┬───┬──────┬──────┐
+//        │ ____ │ ____ │ ____ │ ____ │ ____ │ ____ │                 │ ____ │  _   │ ' │ | │ ____ │ ____ │
+//        ├──────┼──────┼──────┼──────┼──────┼──────┤                 ├──────┼──────┼───┼───┼──────┼──────┤
+//        │ ____ │  ^   │  *   │  &   │ _XXX │ ____ │                 │  #   │  -   │ " │ / │  $   │ ____ │
+//        ├──────┼──────┼──────┼──────┼──────┼──────┤                 ├──────┼──────┼───┼───┼──────┼──────┤
+//        │ ____ │ ____ │ ____ │ ____ │ ____ │ ____ │                 │ ____ │  ~   │ ` │ \ │ ____ │ ____ │
+//        └──────┴──────┴──────┴──────┼──────┼──────┼──────┐   ┌──────┼──────┼──────┼───┴───┴──────┴──────┘
+//                                    │ _XXX │ ____ │ ____ │   │ ____ │ ____ │ _XXX │
+//                                    └──────┴──────┴──────┘   └──────┴──────┴──────┘
+      _XXX   ____        ____       ____       ____   ____                     ____       &kp UNDER   &kp SQT     &kp PIPE   ____         _XXX
+      _XXX   &kp CARET   &kp STAR   &kp AMPS   _XXX   ____                     &kp HASH   &kp MINUS   &kp DQT     &kp FSLH   &kp DOLLAR   _XXX
+      _XXX   ____        ____       ____       ____   ____                     ____       &kp TILDE   &kp GRAVE   &kp BSLH   ____         _XXX
+                                               _XXX   ____   ____       ____   ____       _XXX
+      >;
+    };
+
+    sym_left {
+      display-name = "SYM L";
+      bindings = <
+//        ┌──────┬──────┬───┬───┬──────┬──────┐                 ┌──────┬──────┬──────┬──────┬──────┬──────┐
+//        │ ____ │ ____ │ ! │ : │  ;   │ ____ │                 │ ____ │ ____ │ ____ │ ____ │ ____ │ ____ │
+//        ├──────┼──────┼───┼───┼──────┼──────┤                 ├──────┼──────┼──────┼──────┼──────┼──────┤
+//        │ ____ │  <   │ [ │ { │  (   │  @   │                 │ ____ │ _XXX │ EQL  │  +   │  %   │ ____ │
+//        ├──────┼──────┼───┼───┼──────┼──────┤                 ├──────┼──────┼──────┼──────┼──────┼──────┤
+//        │ ____ │  >   │ ] │ } │  )   │ ____ │                 │ ____ │ ____ │ ____ │ ____ │ ____ │ ____ │
+//        └──────┴──────┴───┴───┼──────┼──────┼──────┐   ┌──────┼──────┼──────┼──────┴──────┴──────┴──────┘
+//                              │ _XXX │ ____ │ ____ │   │ ____ │ ____ │ _XXX │
+//                              └──────┴──────┴──────┘   └──────┴──────┴──────┘
+      _XXX   ____     &kp EXCL   &kp COLON   &kp SEMI   ____                       ____   ____   ____      ____       ____          _XXX
+      _XXX   &kp LT   &kp LBKT   &kp LBRC    &kp LPAR   &kp AT                     ____   _XXX   &kp EQL   &kp PLUS   &kp PERCENT   _XXX
+      _XXX   &kp GT   &kp RBKT   &kp RBRC    &kp RPAR   ____                       ____   ____   ____      ____       ____          _XXX
+                                             _XXX       ____     ____       ____   ____   _XXX
+      >;
+    };
+
+    num {
+      display-name = "NUM";
+      bindings = <
+//        ┌──────┬───┬───┬───┬──────┬──────┐                 ┌──────┬──────────────────────┬──────┬──────┬──────┬──────┐
+//        │ ____ │ / │ 7 │ 8 │  9   │  +   │                 │ ____ │         ____         │ ____ │ ____ │ ____ │ ____ │
+//        ├──────┼───┼───┼───┼──────┼──────┤                 ├──────┼──────────────────────┼──────┼──────┼──────┼──────┤
+//        │ ____ │ 0 │ 1 │ 2 │  3   │  -   │                 │ ____ │       &sk lgui       │ _XXX │ ____ │ ____ │ ____ │
+//        ├──────┼───┼───┼───┼──────┼──────┤                 ├──────┼──────────────────────┼──────┼──────┼──────┼──────┤
+//        │ ____ │ * │ 4 │ 5 │  6   │ EQL  │                 │ ____ │ &sk lctl(lsft(lalt)) │ ____ │ ____ │ ____ │ ____ │
+//        └──────┴───┴───┴───┼──────┼──────┼──────┐   ┌──────┼──────┼──────────────────────┼──────┴──────┴──────┴──────┘
+//                           │ _XXX │ ____ │ ____ │   │ ____ │ ____ │         _XXX         │
+//                           └──────┴──────┴──────┘   └──────┴──────┴──────────────────────┘
+      _XXX   &kp FSLH   &kp N7   &kp N8   &kp N9   &kp PLUS                      ____   ____               ____   ____   ____   _XXX
+      _XXX   &kp N0     &kp N1   &kp N2   &kp N3   &kp MINUS                     ____   &sk LGUI           _XXX   ____   ____   _XXX
+      _XXX   &kp STAR   &kp N4   &kp N5   &kp N6   &kp EQL                       ____   &sk LC(LS(LALT))   ____   ____   ____   _XXX
+                                          _XXX     ____        ____       ____   ____   _XXX
+      >;
+    };
+
+    util {
+      display-name = "UTIL";
+      bindings = <
+//        ┌──────┬──────┬────────┬────────────┬──────┬──────┐                 ┌──────┬─────────────┬────────────┬─────────────┬──────────┬──────┐
+//        │ ____ │ ____ │   :    │     ?      │  !   │ ____ │                 │ ____ │ _HYPR(left) │ _HYPR(up)  │ _HYPR(rght) │   ____   │ ____ │
+//        ├──────┼──────┼────────┼────────────┼──────┼──────┤                 ├──────┼─────────────┼────────────┼─────────────┼──────────┼──────┤
+//        │ ____ │ ____ │ _1PASS │ _raltYCAST │ esc  │ ____ │                 │ ____ │  &sk lgui   │ &sk lctlTL │  &sk lsft   │ &sk lalt │ ____ │
+//        ├──────┼──────┼────────┼────────────┼──────┼──────┤                 ├──────┼─────────────┼────────────┼─────────────┼──────────┼──────┤
+//        │ ____ │ ____ │  ____  │    ____    │ ____ │ ____ │                 │ ____ │     f13     │    ____    │    ____     │   ____   │ ____ │
+//        └──────┴──────┴────────┴────────────┼──────┼──────┼──────┐   ┌──────┼──────┼─────────────┼────────────┴─────────────┴──────────┴──────┘
+//                                            │ _XXX │ ____ │ ____ │   │ _XXX │ ____ │    _XXX     │
+//                                            └──────┴──────┴──────┘   └──────┴──────┴─────────────┘
+      _XXX   ____   &kp COLON   &kp QMARK   &kp EXCL   ____                     ____   _HYPR(LEFT)   _HYPR(UP)   _HYPR(RIGHT)   ____       _XXX
+      _XXX   ____   _1PASS      _RAYCAST    &kp ESC    ____                     ____   &sk LGUI      &sk LCTL    &sk LSHIFT     &sk LALT   _XXX
+      _XXX   ____   ____        ____        ____       ____                     ____   &kp F13       ____        ____           ____       _XXX
+                                            _XXX       ____   ____       _XXX   ____   _XXX
+      >;
+    };
+
+    sys {
+      display-name = "SYS";
+      bindings = <
+//        ┌──────┬──────────┬──────────┬──────────┬──────────┬──────────┐                 ┌──────┬──────┬──────┬──────┬──────┬──────┐
+//        │ ____ │   boot   │   ____   │   ____   │  bt_clr  │   ____   │                 │ ____ │ ____ │ ____ │ ____ │ boot │ ____ │
+//        ├──────┼──────────┼──────────┼──────────┼──────────┼──────────┤                 ├──────┼──────┼──────┼──────┼──────┼──────┤
+//        │ ____ │ bt_sel 0 │ bt_sel 1 │ bt_sel 2 │ bt_sel 3 │ bt_sel 4 │                 │ ____ │ ____ │ ____ │ ____ │ ____ │ ____ │
+//        ├──────┼──────────┼──────────┼──────────┼──────────┼──────────┤                 ├──────┼──────┼──────┼──────┼──────┼──────┤
+//        │ ____ │   ____   │   ____   │   ____   │   ____   │   ____   │                 │ ____ │ ____ │ ____ │ ____ │ ____ │ ____ │
+//        └──────┴──────────┴──────────┴──────────┼──────────┼──────────┼──────┐   ┌──────┼──────┼──────┼──────┴──────┴──────┴──────┘
+//                                                │   _XXX   │   _XXX   │ ____ │   │ ____ │ ____ │ _XXX │
+//                                                └──────────┴──────────┴──────┘   └──────┴──────┴──────┘
+      _XXX   &bootloader    ____           ____           &bt BT_CLR     ____                             ____   ____   ____   ____   &bootloader   _XXX
+      _XXX   &bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3   &bt BT_SEL 4                     ____   ____   ____   ____   ____          _XXX
+      _XXX   ____           ____           ____           ____           ____                             ____   ____   ____   ____   ____          _XXX
+                                                          _XXX           _XXX           ____       ____   ____   _XXX
+      >;
+    };
+  };
 };
