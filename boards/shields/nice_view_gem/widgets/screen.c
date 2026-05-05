@@ -197,6 +197,38 @@ ZMK_SUBSCRIPTION(widget_output_status, zmk_ble_active_profile_changed);
 #endif
 
 /**
+ * Peripheral connection status
+ **/
+
+static void set_peripheral_connection_status(struct zmk_widget_screen *widget,
+                                             struct connection_status_state state) {
+    widget->state.peripheral_connected = state.connected;
+    draw_top(widget->obj, widget->cbuf, &widget->state);
+}
+
+static void peripheral_connection_status_update_cb(struct connection_status_state state) {
+    struct zmk_widget_screen *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+        set_peripheral_connection_status(widget, state);
+    }
+}
+
+static struct connection_status_state peripheral_connection_status_get_state(const zmk_event_t *eh) {
+    const struct zmk_split_peripheral_status_changed *ev =
+        as_zmk_split_peripheral_status_changed(eh);
+
+    return (struct connection_status_state){
+        .connected = (ev != NULL) ? ev->connected : false,
+    };
+}
+
+ZMK_DISPLAY_WIDGET_LISTENER(widget_peripheral_connection_status, struct connection_status_state,
+                            peripheral_connection_status_update_cb,
+                            peripheral_connection_status_get_state);
+
+ZMK_SUBSCRIPTION(widget_peripheral_connection_status, zmk_split_peripheral_status_changed);
+
+/**
  * Activity state handling for sleep screen
  **/
 
@@ -251,6 +283,7 @@ int zmk_widget_screen_init(struct zmk_widget_screen *widget, lv_obj_t *parent) {
     sys_slist_append(&widgets, &widget->node);
     widget_battery_status_init();
     widget_battery_peripheral_status_init();
+    widget_peripheral_connection_status_init();
     widget_layer_status_init();
     widget_output_status_init();
 

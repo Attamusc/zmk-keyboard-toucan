@@ -2,77 +2,60 @@
 #include "output.h"
 #include "../assets/custom_fonts.h"
 
-LV_IMG_DECLARE(bt_no_signal);
-LV_IMG_DECLARE(bt_unbonded);
-LV_IMG_DECLARE(bt);
-LV_IMG_DECLARE(usb);
+// Bottom divider line
+#define OUTPUT_DIVIDER_Y 130
 
-#if !IS_ENABLED(CONFIG_ZMK_SPLIT) || IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
-static void draw_usb_connected(lv_obj_t *canvas) {
-    lv_draw_label_dsc_t label_dsc;
-    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &quinquefive_8, LV_TEXT_ALIGN_LEFT);
-    lv_canvas_draw_text(canvas, 12, 140, SCREEN_WIDTH-8, &label_dsc, "USB");
-}
-#endif
+// Output status position
+#define OUTPUT_TEXT_X 8
+#define OUTPUT_TEXT_Y 142
 
-static void draw_ble_disconnected(lv_obj_t *canvas) {
-    lv_draw_label_dsc_t label_dsc;
-    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &quinquefive_8, LV_TEXT_ALIGN_LEFT);
-    lv_canvas_draw_text(canvas, 12, 140, SCREEN_WIDTH-8, &label_dsc, "NULL");
-}
+// BLE connected dot position
+#define BLE_DOT_X 38
+#define BLE_DOT_Y 144
+#define BLE_DOT_SIZE 5
 
-static void draw_ble_connected(lv_obj_t *canvas) {
-    lv_draw_label_dsc_t label_dsc;
-    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &quinquefive_8, LV_TEXT_ALIGN_LEFT);
-    lv_canvas_draw_text(canvas, 12, 140, SCREEN_WIDTH-8, &label_dsc, "BLE");
+static void draw_connected_dot(lv_obj_t *canvas, bool connected) {
+    if (connected) {
+        lv_draw_rect_dsc_t dot_dsc;
+        init_rect_dsc(&dot_dsc, LVGL_FOREGROUND);
+        lv_canvas_draw_rect(canvas, BLE_DOT_X, BLE_DOT_Y, BLE_DOT_SIZE, BLE_DOT_SIZE, &dot_dsc);
+    } else {
+        // Hollow dot = not connected
+        lv_draw_rect_dsc_t border_dsc;
+        init_rect_dsc(&border_dsc, LVGL_FOREGROUND);
+        lv_canvas_draw_rect(canvas, BLE_DOT_X, BLE_DOT_Y, BLE_DOT_SIZE, BLE_DOT_SIZE, &border_dsc);
+
+        lv_draw_rect_dsc_t clear_dsc;
+        init_rect_dsc(&clear_dsc, LVGL_BACKGROUND);
+        lv_canvas_draw_rect(canvas, BLE_DOT_X + 1, BLE_DOT_Y + 1,
+                            BLE_DOT_SIZE - 2, BLE_DOT_SIZE - 2, &clear_dsc);
+    }
 }
 
 void draw_output_status(lv_obj_t *canvas, const struct status_state *state) {
-    switch (state->selected_endpoint.transport) {
-        case ZMK_TRANSPORT_USB:
-            draw_usb_connected(canvas);
-            break;
-        case ZMK_TRANSPORT_BLE:
-            draw_ble_connected(canvas);
-            break;
-        default:
-            draw_ble_disconnected(canvas);
-            break;
-    }
+    // Bottom divider line
+    lv_draw_rect_dsc_t line_dsc;
+    init_rect_dsc(&line_dsc, LVGL_FOREGROUND);
+    lv_canvas_draw_rect(canvas, 0, OUTPUT_DIVIDER_Y, SCREEN_WIDTH, 1, &line_dsc);
 
-    /*
     lv_draw_label_dsc_t label_dsc;
-    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lcd_phone, LV_TEXT_ALIGN_LEFT);
-    lv_canvas_draw_text(canvas, 0, 1, 25, &label_dsc, "SIG");
-
-    lv_draw_rect_dsc_t rect_white_dsc;
-    init_rect_dsc(&rect_white_dsc, LVGL_FOREGROUND);
-    lv_canvas_draw_rect(canvas, 43, 0, 24, 15, &rect_white_dsc);
+    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &quinquefive_8, LV_TEXT_ALIGN_LEFT);
 
 #if !IS_ENABLED(CONFIG_ZMK_SPLIT) || IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
     switch (state->selected_endpoint.transport) {
     case ZMK_TRANSPORT_USB:
-        draw_usb_connected(canvas);
+        lv_canvas_draw_text(canvas, OUTPUT_TEXT_X, OUTPUT_TEXT_Y, 30, &label_dsc, "USB");
+        // USB is always "connected"
+        draw_connected_dot(canvas, true);
         break;
-
     case ZMK_TRANSPORT_BLE:
-        if (state->active_profile_bonded) {
-            if (state->active_profile_connected) {
-                draw_ble_connected(canvas);
-            } else {
-                draw_ble_disconnected(canvas);
-            }
-        } else {
-            draw_ble_unbonded(canvas);
-        }
+        lv_canvas_draw_text(canvas, OUTPUT_TEXT_X, OUTPUT_TEXT_Y, 30, &label_dsc, "BLE");
+        draw_connected_dot(canvas, state->active_profile_connected);
         break;
-    }
-#else
-    if (state->connected) {
-        draw_ble_connected(canvas);
-    } else {
-        draw_ble_disconnected(canvas);
+    default:
+        lv_canvas_draw_text(canvas, OUTPUT_TEXT_X, OUTPUT_TEXT_Y, 30, &label_dsc, "---");
+        draw_connected_dot(canvas, false);
+        break;
     }
 #endif
-*/
 }
