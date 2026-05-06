@@ -39,7 +39,7 @@ void draw_output_status(lv_obj_t *canvas, const struct status_state *state) {
     lv_canvas_draw_rect(canvas, 0, OUTPUT_DIVIDER_Y, SCREEN_WIDTH, 1, &line_dsc);
 
     lv_draw_label_dsc_t label_dsc;
-    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &quinquefive_8, LV_TEXT_ALIGN_LEFT);
+    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &pixel_operator_mono_16, LV_TEXT_ALIGN_LEFT);
 
 #if !IS_ENABLED(CONFIG_ZMK_SPLIT) || IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
     switch (state->selected_endpoint.transport) {

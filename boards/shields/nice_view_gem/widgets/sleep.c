@@ -137,6 +137,6 @@ void draw_sleep_screen(lv_obj_t *canvas) {
 
     // Show "SLEEP" in small text below the icon
     lv_draw_label_dsc_t label_dsc;
-    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &quinquefive_8, LV_TEXT_ALIGN_LEFT);
+    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &pixel_operator_mono_16, LV_TEXT_ALIGN_LEFT);
     lv_canvas_draw_text(canvas, 12, 140, SCREEN_WIDTH-8, &label_dsc, "SLEEP");
 }

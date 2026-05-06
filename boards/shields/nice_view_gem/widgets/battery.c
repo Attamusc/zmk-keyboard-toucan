@@ -68,7 +68,7 @@ static void draw_bolt(lv_obj_t *canvas, int x, int y) {
 void draw_battery_status(lv_obj_t *canvas, const struct status_state *state) {
     // "L" label
     lv_draw_label_dsc_t label_dsc;
-    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &quinquefive_8, LV_TEXT_ALIGN_LEFT);
+    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &pixel_operator_mono_16, LV_TEXT_ALIGN_LEFT);
     lv_canvas_draw_text(canvas, 2, BATT_Y + 1, 10, &label_dsc, "L");
 
     // Battery outline and fill

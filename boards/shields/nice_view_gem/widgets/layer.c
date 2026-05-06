@@ -12,8 +12,11 @@
 // Divider line above layer zone
 #define LAYER_DIVIDER_Y 34
 
-// Max chars that fit in quinquefive_24 (29px/char × 4 = 116px < 144px screen)
-#define MAX_LARGE_FONT_CHARS 4
+// Layer name position (centered in middle zone)
+#define LAYER_NAME_Y 62
+
+// Layer index sub-text position
+#define LAYER_INDEX_Y 95
 
 void draw_layer_status(lv_obj_t *canvas, const struct status_state *state) {
     // Top divider line
@@ -30,26 +33,16 @@ void draw_layer_status(lv_obj_t *canvas, const struct status_state *state) {
         layer_name = fallback_layer_name;
     }
 
-    // Use large font if name fits, otherwise fall back to small font
-    size_t name_len = strlen(layer_name);
+    // Layer name in large font (pixel_operator_mono_32: 16px/char, fits up to 9 chars)
+    lv_draw_label_dsc_t label_dsc;
+    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &pixel_operator_mono_32, LV_TEXT_ALIGN_CENTER);
+    lv_canvas_draw_text(canvas, 0, LAYER_NAME_Y, SCREEN_WIDTH, &label_dsc, layer_name);
 
-    if (name_len <= MAX_LARGE_FONT_CHARS) {
-        // Large font — vertically centered in the layer zone
-        lv_draw_label_dsc_t label_dsc;
-        init_label_dsc(&label_dsc, LVGL_FOREGROUND, &quinquefive_24, LV_TEXT_ALIGN_CENTER);
-        lv_canvas_draw_text(canvas, 0, 65, SCREEN_WIDTH, &label_dsc, layer_name);
-    } else {
-        // Small font for longer names — still centered but positioned to feel prominent
-        lv_draw_label_dsc_t label_dsc;
-        init_label_dsc(&label_dsc, LVGL_FOREGROUND, &quinquefive_8, LV_TEXT_ALIGN_CENTER);
-        lv_canvas_draw_text(canvas, 0, 76, SCREEN_WIDTH, &label_dsc, layer_name);
-    }
-
-    // Layer index sub-text (small centered, below name)
+    // Layer index sub-text (small)
     lv_draw_label_dsc_t sub_dsc;
-    init_label_dsc(&sub_dsc, LVGL_FOREGROUND, &quinquefive_8, LV_TEXT_ALIGN_CENTER);
+    init_label_dsc(&sub_dsc, LVGL_FOREGROUND, &pixel_operator_mono_16, LV_TEXT_ALIGN_CENTER);
 
     char index_buf[12];
     snprintf(index_buf, sizeof(index_buf), "layer %d", state->layer_index);
-    lv_canvas_draw_text(canvas, 0, 100, SCREEN_WIDTH, &sub_dsc, index_buf);
+    lv_canvas_draw_text(canvas, 0, LAYER_INDEX_Y, SCREEN_WIDTH, &sub_dsc, index_buf);
 }

@@ -3,8 +3,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
-#include "assets/quinquefive_24.c"
-#include "assets/quinquefive_8.c"
+#include "assets/pixel_operator_mono_16.c"
+#include "assets/pixel_operator_mono_32.c"
 #include "assets/custom_fonts.h"
 
 #if IS_ENABLED(CONFIG_NICE_VIEW_WIDGET_STATUS)
