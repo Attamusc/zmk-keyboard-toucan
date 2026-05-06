@@ -472,7 +472,7 @@ static LV_ATTRIBUTE_LARGE_CONST const uint8_t glyph_bitmap_32[] = {
  *  GLYPH DESCRIPTION
  *--------------------*/
 
-static const lv_font_fmt_txt_glyph_dsc_32_t glyph_dsc_32[] = {
+static const lv_font_fmt_txt_glyph_dsc_t glyph_dsc_32[] = {
     {.bitmap_index = 0, .adv_w = 0, .box_w = 0, .box_h = 0, .ofs_x = 0, .ofs_y = 0} /* id = 0 reserved */,
     {.bitmap_index = 0, .adv_w = 256, .box_w = 1, .box_h = 1, .ofs_x = 0, .ofs_y = 0},
     {.bitmap_index = 1, .adv_w = 256, .box_w = 2, .box_h = 18, .ofs_x = 6, .ofs_y = 0},
@@ -639,7 +639,7 @@ lv_font_t pixel_operator_mono_32 = {
     .underline_position = -6,
     .underline_thickness = 2,
 #endif
-    .dsc = &font_dsc_32,          /*The custom font data. Will be accessed by `get_glyph_bitmap_32/dsc` */
+    .dsc = &font_dsc_32,          /*The custom font data. Will be accessed by `get_glyph_bitmap/dsc` */
 #if LV_VERSION_CHECK(8, 2, 0) || LVGL_VERSION_MAJOR >= 9
     .fallback = NULL,
 #endif

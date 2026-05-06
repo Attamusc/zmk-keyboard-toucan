@@ -314,7 +314,7 @@ static LV_ATTRIBUTE_LARGE_CONST const uint8_t glyph_bitmap_16[] = {
  *  GLYPH DESCRIPTION
  *--------------------*/
 
-static const lv_font_fmt_txt_glyph_dsc_16_t glyph_dsc_16[] = {
+static const lv_font_fmt_txt_glyph_dsc_t glyph_dsc_16[] = {
     {.bitmap_index = 0, .adv_w = 0, .box_w = 0, .box_h = 0, .ofs_x = 0, .ofs_y = 0} /* id = 0 reserved */,
     {.bitmap_index = 0, .adv_w = 128, .box_w = 1, .box_h = 1, .ofs_x = 0, .ofs_y = 0},
     {.bitmap_index = 1, .adv_w = 128, .box_w = 1, .box_h = 9, .ofs_x = 3, .ofs_y = 0},
@@ -481,7 +481,7 @@ lv_font_t pixel_operator_mono_16 = {
     .underline_position = -3,
     .underline_thickness = 1,
 #endif
-    .dsc = &font_dsc_16,          /*The custom font data. Will be accessed by `get_glyph_bitmap_16/dsc` */
+    .dsc = &font_dsc_16,          /*The custom font data. Will be accessed by `get_glyph_bitmap/dsc` */
 #if LV_VERSION_CHECK(8, 2, 0) || LVGL_VERSION_MAJOR >= 9
     .fallback = NULL,
 #endif
