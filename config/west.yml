@@ -10,13 +10,20 @@ manifest:
       url-base: https://github.com/caksoylar
     - name: geeksville
       url-base: https://github.com/geeksville
+    - name: kalbasit
+      url-base: https://github.com/kalbasit
   projects:
     - name: zmk
       remote: zmkfirmware
       import: app/west.yml
     - name: cirque-input-module
-      remote: geeksville
-      revision: toucan
+      # Pinned to kalbasit/toucan-fixes: geeksville/toucan HEAD + 2 fixes
+      # (PR #4 K_NO_WAIT to prevent sysworkq deadlock; PR #5 DR IRQ re-arm on
+      # early-return paths). Both fixes resolve right-half battery drain by
+      # ensuring ZMK can actually transition to IDLE / deep sleep.
+      # See: .notes/research/zmk-cirque-battery.md
+      remote: kalbasit
+      revision: toucan-fixes
     - name: zmk-rgbled-widget
       remote: caksoylar
       revision: v0.3

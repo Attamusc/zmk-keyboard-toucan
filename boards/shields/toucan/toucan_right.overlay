@@ -65,10 +65,14 @@
         sensitivity = "2x";
         x-invert;
 
-        // Optional: turning this on enables very aggressive power saving, after 5 seconds with no touches
-        // the trackpad will go to sleep.  It wakes up on touch, but there is a ~300ms delay.  Most users will find
-        // the standard behavior of 'put to sleep when zmk enters idle state (30 seconds without a keypress) feels better.
-        sleep;
+        // Pinnacle chip-level autosleep is intentionally disabled here.
+        // CONFIG_ZMK_INPUT_PINNACLE_IDLE_SLEEPER (in toucan_right.conf) puts
+        // the trackpad into standby when ZMK enters idle (30s of no input).
+        // Enabling 'sleep;' as well would force ~400ms chip-level autosleep
+        // between every touch — the idle sleeper then has to wake it on every
+        // ACTIVE transition, costing power AND adding a 300ms gesture-start
+        // delay. Pick one strategy; we picked the idle sleeper for better UX.
+        // sleep;
     };
 };
 
