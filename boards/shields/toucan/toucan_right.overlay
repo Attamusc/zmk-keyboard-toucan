@@ -51,7 +51,11 @@
 
 &spi0 {
    compatible = "nordic,nrf-spim";
-   status = "okay";
+   // DEBUG: SPI bus disabled to remove the entire trackpad path from firmware
+   // (no driver bind, no SPI activity, no DR GPIO interrupt config). Used to
+   // isolate whether the right-half battery drain is the trackpad path or
+   // something else. Revert this commit to restore normal operation.
+   status = "disabled";
    pinctrl-0 = <&spi0_default>;
    pinctrl-1 = <&spi0_sleep>;
    pinctrl-names = "default", "sleep";
@@ -60,7 +64,7 @@
         compatible = "cirque,pinnacle";
         reg = <0>;
         spi-max-frequency = <1000000>;
-        status = "okay";
+        status = "disabled";  // DEBUG: see &spi0 comment above
         dr-gpios = <&gpio0 2 (GPIO_ACTIVE_HIGH)>;
         sensitivity = "2x";
         x-invert;
@@ -77,6 +81,9 @@
 };
 
 &glidepoint_split {
+    // DEBUG: split input also disabled so nothing tries to forward trackpad
+    // events over BLE. See &spi0 comment above.
+    status = "disabled";
     device = <&glidepoint>;
 
     // Optional
