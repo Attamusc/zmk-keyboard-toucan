@@ -2,6 +2,17 @@
 #include <input/processors.dtsi>
 #include <dt-bindings/zmk/input_transform.h>
 
+/ {
+    // DEBUG: route the Zephyr console to the CDC ACM device created by the
+    // studio-rpc-usb-uart snippet so CONFIG_ZMK_USB_LOGGING has a working
+    // transport on the peripheral half. The snippet itself only sets
+    // chosen { zmk,studio-rpc-uart } and leaves zephyr,console pointing at
+    // a hardware UART that we don't enable — which breaks the UART console
+    // and log backend builds. Revert when removing the debug logging.
+    chosen {
+        zephyr,console = &snippet_studio_rpc_usb_uart;
+    };
+};
 &xiao_i2c {
     status = "disabled";
 };

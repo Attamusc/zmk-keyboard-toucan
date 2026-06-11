@@ -25,5 +25,9 @@ include:
     cmake-args: -DCONFIG_ZMK_STUDIO=y
   - board: seeeduino_xiao_ble
     shield: toucan_right rgbled_adapter
+    # DEBUG: snippet adds the USB CDC ACM device + USB device stack on the
+    # peripheral half so CONFIG_ZMK_USB_LOGGING=y has a transport. Revert
+    # this when removing the debug logging configs from toucan_right.conf.
+    snippet: studio-rpc-usb-uart
   - board: seeeduino_xiao_ble
     shield: settings_reset
