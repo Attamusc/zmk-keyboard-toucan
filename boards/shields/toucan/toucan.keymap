@@ -8,6 +8,7 @@
 #define NAV  1
 #define SYM  2
 #define ADJ  3
+#define MOUSE 7
 
 / {
     conditional_layers {
@@ -61,14 +62,8 @@
             >;
         };
 
-        mouse {
-            display-name = "MOU";
-            bindings = <
-                &trans &trans &trans &trans &trans &trans           &trans &trans &trans &trans &trans &trans
-                &trans &trans &trans &trans &trans &trans           &trans &trans &trans &trans &trans &trans
-                &trans &trans &trans &trans &trans &trans           &trans &trans &trans &trans &trans &trans
-                            &mkp MCLK &mkp LCLK &mkp RCLK           &mkp LCLK &mkp RCLK &mkp MCLK
-            >;
+        extra_1 {
+                status = "reserved";
         };
 
         extra_2 {
@@ -77,6 +72,16 @@
 
         extra_3 {
                 status = "reserved";
+        };
+
+        mouse {
+            display-name = "MOU";
+            bindings = <
+                &trans &trans &trans &trans &trans &trans           &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans           &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans           &trans &trans &trans &trans &trans &trans
+                            &mkp MCLK &mkp LCLK &mkp RCLK           &mkp LCLK &mkp RCLK &mkp MCLK
+            >;
         };
     };
 };
