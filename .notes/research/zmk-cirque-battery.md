@@ -1,3 +1,7 @@
+> [!WARNING]
+> **Historical Toucan v1 research only. Do not use this document to configure Toucan2.**
+> This analysis applies to the legacy Cirque/Pinnacle trackpad. Toucan2 uses an Azoteq TPS43, so the drivers, power behavior, settings, and recommendations below do not apply. See the repository README and `boards/shields/toucan/toucan_right.overlay` for current Toucan2 guidance.
+
 # ZMK Cirque Pinnacle Battery Life – Right-Half Drain Analysis
 
 > **Researched:** 2026-06-05  

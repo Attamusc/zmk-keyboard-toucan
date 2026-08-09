@@ -1,5 +1,5 @@
 #include <zephyr/kernel.h>
-#include "battery_peripheral.h"
+#include "battery_vertical_peripheral.h"
 #include "../assets/custom_fonts.h"
 
 LV_IMG_DECLARE(bolt);

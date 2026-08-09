@@ -649,4 +649,3 @@ lv_font_t pixel_operator_mono_32 = {
 
 
 #endif /*#if PIXEL_OPERATOR_MONO_32*/
-

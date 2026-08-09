@@ -3,8 +3,15 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
+#if defined(CONFIG_TOUCAN_STATUS_SCREEN) && CONFIG_TOUCAN_STATUS_SCREEN == 3
 #include "assets/pixel_operator_mono_16.c"
 #include "assets/pixel_operator_mono_32.c"
+#else
+#include "assets/quinquefive_24.c"
+#include "assets/quinquefive_18.c"
+#include "assets/quinquefive_12.c"
+#include "assets/quinquefive_8.c"
+#endif
 #include "assets/custom_fonts.h"
 
 #if IS_ENABLED(CONFIG_NICE_VIEW_WIDGET_STATUS)
